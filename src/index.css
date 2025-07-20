@@ -1,0 +1,181 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer base {
+  :root {
+    /* Core dark theme colors */
+    --background: 0 0% 4%;
+    --foreground: 0 0% 88%;
+
+    --card: 0 0% 8%;
+    --card-foreground: 0 0% 88%;
+
+    --popover: 0 0% 6%;
+    --popover-foreground: 0 0% 88%;
+
+    /* Light purple primary accent */
+    --primary: 267 73% 85%;
+    --primary-foreground: 0 0% 4%;
+
+    /* Electric blue secondary */
+    --secondary: 210 100% 60%;
+    --secondary-foreground: 0 0% 88%;
+
+    /* Muted grays */
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 60%;
+
+    /* Accent colors */
+    --accent: 0 0% 12%;
+    --accent-foreground: 0 0% 88%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 20%;
+    --input: 0 0% 12%;
+    --ring: 267 73% 85%;
+
+    --radius: 0.75rem;
+
+    /* Custom AI app colors */
+    --light-purple: 267 73% 85%;
+    --electric-blue: 210 100% 60%;
+    --cyber-green: 120 100% 50%;
+    --dark-surface: 0 0% 8%;
+    --glass-surface: 0 0% 12%;
+    
+    /* Glow effects */
+    --purple-glow: 0 0 20px hsl(267 73% 85% / 0.5);
+    --blue-glow: 0 0 20px hsl(210 100% 60% / 0.3);
+    --subtle-glow: 0 0 10px hsl(0 0% 100% / 0.1);
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+}
+
+@layer components {
+  .terminal-input {
+    @apply bg-input border border-border rounded-lg px-4 py-3 text-foreground placeholder:text-muted-foreground transition-all duration-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none;
+    box-shadow: 0 0 10px hsl(var(--primary) / 0.1);
+  }
+  
+  .terminal-input:focus {
+    box-shadow: var(--purple-glow);
+  }
+
+  /* Neon button styles */
+  .neon-button {
+    @apply bg-primary text-primary-foreground rounded-full px-6 py-3 font-semibold transition-all duration-300 hover:scale-105;
+    box-shadow: var(--purple-glow);
+  }
+  
+  .neon-button:hover {
+    box-shadow: 0 0 30px hsl(var(--primary) / 0.8);
+  }
+
+  /* Glass morphism effect */
+  .glass-surface {
+    background: hsl(var(--glass-surface) / 0.8);
+    backdrop-filter: blur(12px);
+    border: 1px solid hsl(var(--border) / 0.3);
+  }
+
+  .glow-card {
+    @apply transition-all duration-300 border border-border/50 rounded-xl p-4;
+    background: hsl(var(--card));
+  }
+  
+  .glow-card:hover {
+    box-shadow: var(--subtle-glow);
+    border-color: hsl(var(--primary) / 0.3);
+  }
+
+  .ai-suggestion {
+    @apply glass-surface rounded-lg p-3 transition-all duration-300 hover:scale-[1.02] cursor-pointer;
+    border: 1px solid hsl(var(--secondary) / 0.2);
+  }
+  
+  .ai-suggestion:hover {
+    box-shadow: var(--blue-glow);
+    border-color: hsl(var(--secondary) / 0.5);
+  }
+
+  .fab {
+    @apply fixed bottom-6 right-6 w-14 h-14 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xl font-bold shadow-lg transition-all duration-300 hover:scale-110 z-50;
+    box-shadow: var(--purple-glow);
+  }
+  
+  .fab:hover {
+    box-shadow: 0 0 40px hsl(var(--primary) / 1);
+  }
+
+  .ai-orb {
+    @apply w-3 h-3 bg-secondary rounded-full animate-pulse;
+    box-shadow: var(--blue-glow);
+  }
+}
