@@ -13,7 +13,7 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
-      <Sonner />
+      <Sonner /> 
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
@@ -26,3 +26,6 @@ const App = () => (
 );
 
 export default App;
+
+//test commit
+//test
