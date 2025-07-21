@@ -1,13 +1,12 @@
 import express from 'express';
 import auth from '../middleware/auth.js';
-import { body, param, query } from 'express-validator';
+import { body, param } from 'express-validator';
 import { validate } from '../middleware/validate.js';
 import * as notesController from '../controllers/notesController.js';
 
 const router = express.Router();
 
 router.get('/', auth, notesController.getNotes);
-
 router.get('/:id', auth, notesController.getNoteById);
 
 router.post(
