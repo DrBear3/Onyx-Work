@@ -1,3 +1,4 @@
+// Need to update this code snippet to use Magic.link for authentication
 // Magic.link authentication middleware
 export default async function auth(req, res, next) {
   try {
