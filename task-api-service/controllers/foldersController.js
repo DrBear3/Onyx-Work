@@ -14,6 +14,22 @@ export const getFolders = async (req, res, next) => {
   }
 };
 
+// Get a folder by id
+export const getFolderById = async (req, res, next) => {
+  try {
+    const { issuer } = req.user;
+    const { id } = req.params;
+    const { rows } = await pool.query(
+      'SELECT * FROM folders WHERE id = $1 AND user_id = $2 AND deleted_at IS NULL',
+      [id, issuer]
+    );
+    if (!rows[0]) return res.status(404).json({ error: 'Folder not found' });
+    res.json(rows[0]);
+  } catch (err) {
+    next(err);
+  }
+};
+
 // Create a folder
 export const createFolder = async (req, res, next) => {
   try {

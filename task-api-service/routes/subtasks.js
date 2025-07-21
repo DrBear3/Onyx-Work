@@ -6,15 +6,9 @@ import * as subtasksController from '../controllers/subtasksController.js';
 
 const router = express.Router();
 
-router.get(
-  '/',
-  auth,
-  [
-    query('task_id').isInt().withMessage('task_id is required and must be an integer')
-  ],
-  validate,
-  subtasksController.getSubtasks
-);
+router.get('/', auth, subtasksController.getSubtasks);
+
+router.get('/:id', auth, subtasksController.getSubtaskById);
 
 router.post(
   '/',

@@ -8,6 +8,8 @@ const router = express.Router();
 
 router.get('/', auth, foldersController.getFolders);
 
+router.get('/:id', auth, foldersController.getFolderById);
+
 router.post(
   '/',
   auth,

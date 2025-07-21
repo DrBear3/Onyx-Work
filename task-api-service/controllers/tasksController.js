@@ -1,6 +1,6 @@
 import pool from '../db/pool.js';
 
-// List tasks in a folder for the user
+// List tasks for the user, optionally filtered by folder_id
 export const getTasks = async (req, res, next) => {
   try {
     const { issuer } = req.user;
@@ -13,7 +13,6 @@ export const getTasks = async (req, res, next) => {
       );
       rows = result.rows;
     } else {
-      // If no folder_id, return all tasks for the user
       const result = await pool.query(
         'SELECT * FROM tasks WHERE user_id = $1 AND deleted_at IS NULL ORDER BY created_at DESC',
         [issuer]
@@ -21,6 +20,22 @@ export const getTasks = async (req, res, next) => {
       rows = result.rows;
     }
     res.json(rows);
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Get a single task by id
+export const getTaskById = async (req, res, next) => {
+  try {
+    const { issuer } = req.user;
+    const { id } = req.params;
+    const { rows } = await pool.query(
+      'SELECT * FROM tasks WHERE id = $1 AND user_id = $2 AND deleted_at IS NULL',
+      [id, issuer]
+    );
+    if (!rows[0]) return res.status(404).json({ error: 'Task not found' });
+    res.json(rows[0]);
   } catch (err) {
     next(err);
   }

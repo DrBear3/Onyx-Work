@@ -6,15 +6,9 @@ import * as notesController from '../controllers/notesController.js';
 
 const router = express.Router();
 
-router.get(
-  '/',
-  auth,
-  [
-    query('task_id').isInt().withMessage('task_id is required and must be an integer')
-  ],
-  validate,
-  notesController.getNotes
-);
+router.get('/', auth, notesController.getNotes);
+
+router.get('/:id', auth, notesController.getNoteById);
 
 router.post(
   '/',

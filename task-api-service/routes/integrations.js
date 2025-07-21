@@ -6,11 +6,9 @@ import * as integrationsController from '../controllers/integrationsController.j
 
 const router = express.Router();
 
-router.get(
-  '/',
-  auth,
-  integrationsController.getIntegrations
-);
+router.get('/', auth, integrationsController.getIntegrations);
+
+router.get('/:id', auth, integrationsController.getIntegrationById);
 
 router.post(
   '/',

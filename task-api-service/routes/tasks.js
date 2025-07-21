@@ -2,19 +2,13 @@ import express from 'express';
 import auth from '../middleware/auth.js';
 import { body, param, query } from 'express-validator';
 import { validate } from '../middleware/validate.js';
-import * as tasksController from '../Controllers/tasksController.js';
+import * as tasksController from '../controllers/tasksController.js';
 
 const router = express.Router();
 
-router.get(
-  '/',
-  auth,
-  [
-    query('folder_id').optional().isInt().withMessage('folder_id must be an integer')
-  ],
-  validate,
-  tasksController.getTasks
-);
+router.get('/', auth, tasksController.getTasks);
+
+router.get('/:id', auth, tasksController.getTaskById);
 
 router.post(
   '/',

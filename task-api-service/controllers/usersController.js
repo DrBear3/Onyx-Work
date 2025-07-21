@@ -1,5 +1,17 @@
 import pool from '../db/pool.js';
 
+// Get all users (admin/dev purpose)
+export const getAllUsers = async (req, res, next) => {
+  try {
+    const { rows } = await pool.query(
+      'SELECT * FROM app_users WHERE deleted_at IS NULL ORDER BY created_at DESC'
+    );
+    res.json(rows);
+  } catch (err) {
+    next(err);
+  }
+};
+
 // Get current user info (profile) by Magic issuer
 export const getCurrentUser = async (req, res, next) => {
   try {
@@ -7,6 +19,21 @@ export const getCurrentUser = async (req, res, next) => {
     const { rows } = await pool.query(
       'SELECT * FROM app_users WHERE user_id = $1 AND deleted_at IS NULL',
       [issuer]
+    );
+    if (!rows[0]) return res.status(404).json({ error: 'User not found' });
+    res.json(rows[0]);
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Get user by id (admin/dev purpose)
+export const getUserById = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { rows } = await pool.query(
+      'SELECT * FROM app_users WHERE id = $1 AND deleted_at IS NULL',
+      [id]
     );
     if (!rows[0]) return res.status(404).json({ error: 'User not found' });
     res.json(rows[0]);
@@ -56,7 +83,6 @@ export const updateUser = async (req, res, next) => {
 export const deleteUser = async (req, res, next) => {
   try {
     const { issuer } = req.user;
-    // Soft delete the user by setting deleted_at
     const { rowCount } = await pool.query(
       'UPDATE app_users SET deleted_at = NOW() WHERE user_id = $1 AND deleted_at IS NULL',
       [issuer]

@@ -6,10 +6,12 @@ import * as usersController from '../controllers/usersController.js';
 
 const router = express.Router();
 
-// Get current user info (profile)
 router.get('/me', auth, usersController.getCurrentUser);
 
-// Create a new user (signup, Magic.link registration)
+router.get('/', auth, usersController.getAllUsers);
+
+router.get('/:id', auth, usersController.getUserById);
+
 router.post(
   '/',
   auth,
@@ -22,7 +24,6 @@ router.post(
   usersController.createUser
 );
 
-// Update user profile
 router.put(
   '/',
   auth,
@@ -35,7 +36,6 @@ router.put(
   usersController.updateUser
 );
 
-// Soft-delete current user
 router.delete(
   '/',
   auth,
