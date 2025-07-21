@@ -6,7 +6,7 @@ import foldersRouter from './routes/folders.js';
 import tasksRouter from './routes/tasks.js';
 import subtasksRouter from './routes/subtasks.js';
 import notesRouter from './routes/notes.js';
-import usersRouter from './routes/users.js';
+import usersRouter from './routes/app_users.js';
 import integrationsRouter from './routes/integrations.js';
 
 import { errorHandler } from './middleware/errorHandler.js';
@@ -22,7 +22,7 @@ app.use('/folders', foldersRouter);
 app.use('/tasks', tasksRouter);
 app.use('/subtasks', subtasksRouter);
 app.use('/notes', notesRouter);
-app.use('/users', usersRouter);
+app.use('/users', app_usersRouter);
 app.use('/integrations', integrationsRouter);
 
 // Health check
