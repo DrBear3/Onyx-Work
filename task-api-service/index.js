@@ -1,17 +1,10 @@
-import dotenv from "dotenv";
-import express from "express";
-import pg from "pg";
+import dotenv from 'dotenv';
+import express from 'express';
+import pkg from 'pg';
 
 dotenv.config();
 
-const { Pool } = pg;
-
-const app = express();
-app.use(express.json());
-
-require('dotenv').config();
-const express = require('express');
-const { Pool } = require('pg');
+const { Pool } = pkg;
 
 const app = express();
 app.use(express.json());
