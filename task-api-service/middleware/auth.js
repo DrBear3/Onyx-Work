@@ -6,9 +6,9 @@ export default async function auth(req, res, next) {
     }
     // For testing: set a dummy user object
     req.user = {
-      issuer: 'test-issuer',
-      email: 'test@example.com',
-      publicAddress: '0x1234'
+    issuer: '7e8f7b1c-4c37-4b8d-8f44-12b5e468a8c8', // <-- valid UUID!
+    email: 'test@example.com',
+    publicAddress: '0x1234'
     };
     next();
   } catch (err) {
