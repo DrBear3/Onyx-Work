@@ -36,4 +36,6 @@ router.delete(
   notesController.deleteNote
 );
 
+router.post('/debug', (req, res) => res.json({message: "It works"}));
+
 export default router;
