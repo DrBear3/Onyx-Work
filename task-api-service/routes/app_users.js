@@ -1,16 +1,16 @@
 import express from 'express';
-import auth from '../middleware/auth.js';
+import auth from '/middleware/auth.js';
 import { body } from 'express-validator';
 import { validate } from '../middleware/validate.js';
-import * as usersController from '../controllers/app_usersController.js';
+import * as app_usersController from '../controllers/app_usersController.js';
 
 const router = express.Router();
 
-router.get('/me', auth, usersController.getCurrentUser);
+router.get('/me', auth, app_usersController.getCurrentUser);
 
-router.get('/', auth, usersController.getAllUsers);
+router.get('/', auth, app_usersController.getAllUsers);
 
-router.get('/:id', auth, usersController.getUserById);
+router.get('/:id', auth, app_usersController.getUserById);
 
 router.post(
   '/',
@@ -21,7 +21,7 @@ router.post(
     body('subscription').optional().isString(),
   ],
   validate,
-  usersController.createUser
+  app_usersController.createUser
 );
 
 router.put(
@@ -33,13 +33,13 @@ router.put(
     body('auth_method').optional().isString(),
   ],
   validate,
-  usersController.updateUser
+  app_usersController.updateUser
 );
 
 router.delete(
   '/',
   auth,
-  usersController.deleteUser
+  app_usersController.deleteUser
 );
 
 export default router;
