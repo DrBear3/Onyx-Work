@@ -15,7 +15,8 @@ export const getAllUsers = async (req, res, next) => {
 // Get current user info (profile) by Magic issuer
 export const getCurrentUser = async (req, res, next) => {
   try {
-    const { issuer } = req.user;
+    // Temporarily use a mock issuer or from query param for testing
+    const issuer = req.user?.issuer || req.query.user_id || 'test-issuer-uuid';
     const { rows } = await pool.query(
       'SELECT * FROM app_users WHERE user_id = $1 AND deleted_at IS NULL',
       [issuer]
@@ -45,11 +46,13 @@ export const getUserById = async (req, res, next) => {
 // Create user (for signup)
 export const createUser = async (req, res, next) => {
   try {
-    const { email, auth_method, subscription } = req.body;
-    const { issuer } = req.user;
+    const { user_id, email, auth_method, subscription } = req.body;
+    // Temporarily use user_id from body for testing (postponing Magic issuer)
+    // If not provided, fallback to mock
+    const effectiveUserId = user_id || req.user?.issuer || 'test-issuer-uuid';
     const { rows } = await pool.query(
       'INSERT INTO app_users (user_id, email, auth_method, subscription) VALUES ($1, $2, $3, $4) RETURNING *',
-      [issuer, email, auth_method, subscription]
+      [effectiveUserId, email, auth_method, subscription]
     );
     res.status(201).json(rows[0]);
   } catch (err) {
@@ -61,7 +64,8 @@ export const createUser = async (req, res, next) => {
 export const updateUser = async (req, res, next) => {
   try {
     const { email, auth_method, subscription } = req.body;
-    const { issuer } = req.user;
+    // Temporarily use issuer from req.user or body for testing
+    const issuer = req.user?.issuer || req.body.user_id || 'test-issuer-uuid';
     const { rows } = await pool.query(
       `UPDATE app_users
        SET email = COALESCE($1, email),
@@ -82,7 +86,8 @@ export const updateUser = async (req, res, next) => {
 // Soft-delete user
 export const deleteUser = async (req, res, next) => {
   try {
-    const { issuer } = req.user;
+    // Temporarily use issuer from req.user or query for testing
+    const issuer = req.user?.issuer || req.query.user_id || 'test-issuer-uuid';
     const { rowCount } = await pool.query(
       'UPDATE app_users SET deleted_at = NOW() WHERE user_id = $1 AND deleted_at IS NULL',
       [issuer]
