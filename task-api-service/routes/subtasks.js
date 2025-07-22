@@ -14,7 +14,7 @@ router.post(
   '/',
   auth,
   [
-    body('task_id').isInt().withMessage('task_id required'),
+    body('task_id').isUUID().withMessage('task_id must be a valid UUID'),
     body('title').isString().notEmpty().withMessage('title required')
   ],
   validate,
@@ -24,7 +24,7 @@ router.post(
 router.put(
   '/:id',
   auth,
-  [param('id').isInt().withMessage('Invalid subtask id')],
+  [param('id').isUUID().withMessage('Invalid subtask id')],
   validate,
   subtasksController.updateSubtask
 );
@@ -32,7 +32,7 @@ router.put(
 router.delete(
   '/:id',
   auth,
-  [param('id').isInt().withMessage('Invalid subtask id')],
+  [param('id').isUUID().withMessage('Invalid subtask id')],
   validate,
   subtasksController.deleteSubtask
 );
