@@ -8,6 +8,7 @@ import subtasksRouter from './routes/subtasks.js';
 import notesRouter from './routes/notes.js';
 import app_usersRouter from './routes/app_users.js';
 import integrationsRouter from './routes/integrations.js';
+import task_ai_messagesRouter from './routes/task_ai_messages.js';
 
 import { errorHandler } from './middleware/errorHandler.js';
 
