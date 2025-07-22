@@ -1,14 +1,31 @@
+import { Magic } from '@magic-sdk/admin';
+
+// Initialize Magic Admin SDK with the secret key from environment variables
+const magic = new Magic(process.env.MAGIC_SECRET_KEY);
+
 export default async function auth(req, res, next) {
   try {
     const authHeader = req.headers['authorization'];
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(401).json({ error: 'Authorization token required' });
     }
-    // Temporarily set a mock req.user for testing (postponing full Magic integration)
-    // This prevents the 'req.user undefined' error; replace with actual validation later
-    req.user = { issuer: 'a4e222d4-73b9-4760-9dfd-1dc84b6dc982' };  // Use a fixed test UUID or make it dynamic if needed
+
+    // Extract the token from the Authorization header
+    const token = authHeader.replace('Bearer ', '');
+
+    // Validate the token using Magic Admin SDK
+    const { issuer, publicAddress, email } = await magic.users.getMetadataByToken(token);
+
+    // Attach user data to the request object
+    req.user = { issuer, publicAddress, email };
+
     next();
   } catch (err) {
     return res.status(401).json({ error: 'Authentication failed', details: err.message });
   }
+
+  // Commented out original mock code for testing reversion:
+  // // Temporarily set a mock req.user for testing (postponing full Magic integration)
+  // // This prevents the 'req.user undefined' error; replace with actual validation later
+  // req.user = { issuer: 'a4e222d4-73b9-4760-9dfd-1dc84b6dc982' };  // Use a fixed test UUID or make it dynamic if needed
 }
