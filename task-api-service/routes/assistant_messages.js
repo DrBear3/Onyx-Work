@@ -3,7 +3,7 @@ import express from 'express';
 import auth from '../middleware/auth.js';
 import { body, param, query } from 'express-validator';
 import { validate } from '../middleware/validate.js';
-import * as assistantMessagesController from '../controllers/assistantMessagesController.js';
+import * as assistant_messagesController from '../controllers/assistant_messagesController.js';
 
 const router = express.Router();
 
