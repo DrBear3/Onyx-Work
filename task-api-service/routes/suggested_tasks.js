@@ -3,7 +3,7 @@ import express from 'express';
 import auth from '../middleware/auth.js';
 import { body, param, query } from 'express-validator';
 import { validate } from '../middleware/validate.js';
-import * as suggested_tasksController from '../controllers/suggestedTasksController.js';
+import * as suggested_tasksController from '../controllers/suggested_tasksController.js';
 
 const router = express.Router();
 

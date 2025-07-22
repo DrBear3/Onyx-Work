@@ -1,4 +1,4 @@
-// controllers/suggestedTasksController.js
+// controllers/suggested_tasksController.js
 import pool from '../db/pool.js';
 
 // List suggested tasks for the user, optionally filtered by suggestion_batch_id
