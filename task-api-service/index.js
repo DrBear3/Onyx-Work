@@ -24,6 +24,7 @@ app.use('/subtasks', subtasksRouter);
 app.use('/notes', notesRouter);
 app.use('/app_users', app_usersRouter);
 app.use('/integrations', integrationsRouter);
+app.use('/task_ai_messages', task_ai_messagesRouter);
 
 // Health check
 app.get('/', (req, res) => res.json({ status: 'API is running!' }));
