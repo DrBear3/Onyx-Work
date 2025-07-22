@@ -1,3 +1,4 @@
+// routes/integrations.js
 import express from 'express';
 import auth from '../middleware/auth.js';
 import { body, param } from 'express-validator';
@@ -14,7 +15,8 @@ router.post(
   '/',
   auth,
   [
-    body('gmail').optional().isString().withMessage('gmail must be a string')
+    body('gmail').optional().isBoolean().withMessage('gmail must be a boolean'),
+    body('status').optional().isBoolean().withMessage('status must be a boolean')
   ],
   validate,
   integrationsController.createIntegration
@@ -24,19 +26,12 @@ router.put(
   '/:id',
   auth,
   [
-    param('id').isInt().withMessage('Invalid integration id'),
-    body('gmail').optional().isString()
+    param('id').isUUID().withMessage('Invalid integration id'),
+    body('gmail').optional().isBoolean().withMessage('gmail must be a boolean'),
+    body('status').optional().isBoolean().withMessage('status must be a boolean')
   ],
   validate,
   integrationsController.updateIntegration
-);
-
-router.delete(
-  '/:id',
-  auth,
-  [param('id').isInt().withMessage('Invalid integration id')],
-  validate,
-  integrationsController.deleteIntegration
 );
 
 export default router;

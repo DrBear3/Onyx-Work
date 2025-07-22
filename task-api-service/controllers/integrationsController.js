@@ -1,3 +1,4 @@
+// controllers/integrationsController.js
 import pool from '../db/pool.js';
 
 // List integrations for authenticated user
@@ -5,7 +6,7 @@ export const getIntegrations = async (req, res, next) => {
   try {
     const { issuer } = req.user;
     const { rows } = await pool.query(
-      'SELECT * FROM integrations WHERE user_id = $1 AND deleted_at IS NULL ORDER BY created_at DESC',
+      'SELECT * FROM integrations WHERE user_id = $1 ORDER BY created_at DESC',
       [issuer]
     );
     res.json(rows);
@@ -20,7 +21,7 @@ export const getIntegrationById = async (req, res, next) => {
     const { issuer } = req.user;
     const { id } = req.params;
     const { rows } = await pool.query(
-      'SELECT * FROM integrations WHERE id = $1 AND user_id = $2 AND deleted_at IS NULL',
+      'SELECT * FROM integrations WHERE id = $1 AND user_id = $2',
       [id, issuer]
     );
     if (!rows[0]) return res.status(404).json({ error: 'Integration not found' });
@@ -34,11 +35,11 @@ export const getIntegrationById = async (req, res, next) => {
 export const createIntegration = async (req, res, next) => {
   try {
     const { issuer } = req.user;
-    const { gmail } = req.body;
+    const { gmail, status } = req.body;
     const { rows } = await pool.query(
-      `INSERT INTO integrations (user_id, gmail)
-       VALUES ($1, $2) RETURNING *`,
-      [issuer, gmail]
+      `INSERT INTO integrations (user_id, gmail, status)
+       VALUES ($1, $2, $3) RETURNING *`,
+      [issuer, gmail || false, status || true]
     );
     res.status(201).json(rows[0]);
   } catch (err) {
@@ -46,38 +47,23 @@ export const createIntegration = async (req, res, next) => {
   }
 };
 
-// Update an integration
+// Update an integration (toggle status or update gmail)
 export const updateIntegration = async (req, res, next) => {
   try {
-    const { gmail } = req.body;
+    const { gmail, status } = req.body;
     const { issuer } = req.user;
     const { id } = req.params;
     const { rows } = await pool.query(
       `UPDATE integrations
        SET gmail = COALESCE($1, gmail),
+           status = COALESCE($2, status),
            updated_at = NOW()
-       WHERE id = $2 AND user_id = $3 AND deleted_at IS NULL
+       WHERE id = $3 AND user_id = $4
        RETURNING *`,
-      [gmail, id, issuer]
+      [gmail, status, id, issuer]
     );
     if (!rows[0]) return res.status(404).json({ error: 'Integration not found' });
     res.json(rows[0]);
-  } catch (err) {
-    next(err);
-  }
-};
-
-// Soft-delete an integration
-export const deleteIntegration = async (req, res, next) => {
-  try {
-    const { issuer } = req.user;
-    const { id } = req.params;
-    const result = await pool.query(
-      'UPDATE integrations SET deleted_at = NOW() WHERE id = $1 AND user_id = $2 AND deleted_at IS NULL RETURNING id',
-      [id, issuer]
-    );
-    if (!result.rows[0]) return res.status(404).json({ error: 'Integration not found' });
-    res.status(204).end();
   } catch (err) {
     next(err);
   }
