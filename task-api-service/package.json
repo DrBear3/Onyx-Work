@@ -12,6 +12,7 @@
     "dotenv": "^16.6.1",
     "express": "^4.21.2",
     "express-validator": "^7.0.1",
+    "jsonwebtoken": "^9.0.2",
     "pg": "^8.11.2"
   },
   "devDependencies": {
