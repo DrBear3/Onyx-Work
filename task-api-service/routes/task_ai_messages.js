@@ -3,13 +3,13 @@ import express from 'express';
 import auth from '../middleware/auth.js';
 import { body, param, query } from 'express-validator';
 import { validate } from '../middleware/validate.js';
-import * as taskAiMessagesController from '../controllers/taskAiMessagesController.js';
+import * as task_ai_messagesController from '../controllers/task_ai_messagesController.js';
 
 const router = express.Router();
 
-router.get('/', auth, taskAiMessagesController.getTaskAiMessages);
+router.get('/', auth, task_ai_messagesController.getTaskAiMessages);
 
-router.get('/:id', auth, taskAiMessagesController.getTaskAiMessageById);
+router.get('/:id', auth, task_ai_messagesController.getTaskAiMessageById);
 
 router.post(
   '/',
@@ -21,7 +21,7 @@ router.post(
     body('from_ai').isBoolean().withMessage('from_ai must be a boolean')
   ],
   validate,
-  taskAiMessagesController.createTaskAiMessage
+  task_ai_messagesController.createTaskAiMessage
 );
 
 router.put(
@@ -34,7 +34,7 @@ router.put(
     body('from_ai').optional().isBoolean().withMessage('from_ai must be a boolean')
   ],
   validate,
-  taskAiMessagesController.updateTaskAiMessage
+  task_ai_messagesController.updateTaskAiMessage
 );
 
 router.delete(
@@ -42,7 +42,7 @@ router.delete(
   auth,
   [param('id').isUUID().withMessage('Invalid task AI message id')],
   validate,
-  taskAiMessagesController.deleteTaskAiMessage
+  task_ai_messagesController.deleteTaskAiMessage
 );
 
 export default router;
