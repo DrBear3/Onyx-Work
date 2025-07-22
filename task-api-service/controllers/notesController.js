@@ -8,13 +8,13 @@ export const getNotes = async (req, res, next) => {
     let rows;
     if (task_id) {
       const result = await pool.query(
-        'SELECT * FROM notes WHERE task_id = $1 AND user_id = $2 AND deleted_at IS NULL ORDER BY created_at DESC',
+        'SELECT * FROM notes WHERE task_id = $1 AND user_id = $2 ORDER BY created_at DESC',
         [task_id, issuer]
       );
       rows = result.rows;
     } else {
       const result = await pool.query(
-        'SELECT * FROM notes WHERE user_id = $1 AND deleted_at IS NULL ORDER BY created_at DESC',
+        'SELECT * FROM notes WHERE user_id = $1 ORDER BY created_at DESC',
         [issuer]
       );
       rows = result.rows;
@@ -31,7 +31,7 @@ export const getNoteById = async (req, res, next) => {
     const { issuer } = req.user;
     const { id } = req.params;
     const { rows } = await pool.query(
-      'SELECT * FROM notes WHERE id = $1 AND user_id = $2 AND deleted_at IS NULL',
+      'SELECT * FROM notes WHERE id = $1 AND user_id = $2',
       [id, issuer]
     );
     if (!rows[0]) return res.status(404).json({ error: 'Note not found' });
@@ -65,9 +65,9 @@ export const updateNote = async (req, res, next) => {
     const { id } = req.params;
     const { rows } = await pool.query(
       `UPDATE notes
-       SET content = COALESCE($1, content),
+       SET content = $1,
            updated_at = NOW()
-       WHERE id = $2 AND user_id = $3 AND deleted_at IS NULL
+       WHERE id = $2 AND user_id = $3
        RETURNING *`,
       [content, id, issuer]
     );
@@ -78,13 +78,17 @@ export const updateNote = async (req, res, next) => {
   }
 };
 
-// Soft-delete a note
+// "Delete" a note by setting content to null
 export const deleteNote = async (req, res, next) => {
   try {
     const { issuer } = req.user;
     const { id } = req.params;
     const result = await pool.query(
-      'UPDATE notes SET deleted_at = NOW() WHERE id = $1 AND user_id = $2 AND deleted_at IS NULL RETURNING id',
+      `UPDATE notes
+       SET content = NULL,
+           updated_at = NOW()
+       WHERE id = $1 AND user_id = $2
+       RETURNING id`,
       [id, issuer]
     );
     if (!result.rows[0]) return res.status(404).json({ error: 'Note not found' });

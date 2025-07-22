@@ -13,7 +13,7 @@ router.post(
   '/',
   auth,
   [
-    body('task_id').isInt().withMessage('task_id required'),
+    body('task_id').isUUID().withMessage('task_id must be a valid UUID'),
     body('content').isString().notEmpty().withMessage('content required')
   ],
   validate,
@@ -23,7 +23,7 @@ router.post(
 router.put(
   '/:id',
   auth,
-  [param('id').isInt().withMessage('Invalid note id')],
+  [param('id').isUUID().withMessage('Invalid note id')],
   validate,
   notesController.updateNote
 );
@@ -31,7 +31,7 @@ router.put(
 router.delete(
   '/:id',
   auth,
-  [param('id').isInt().withMessage('Invalid note id')],
+  [param('id').isUUID().withMessage('Invalid note id')],
   validate,
   notesController.deleteNote
 );
