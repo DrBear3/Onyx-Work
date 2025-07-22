@@ -10,6 +10,7 @@ import app_usersRouter from './routes/app_users.js';
 import integrationsRouter from './routes/integrations.js';
 import task_ai_messagesRouter from './routes/task_ai_messages.js';
 import assistant_messagesRouter from './routes/assistant_messages.js';
+import suggested_tasksRouter from './routes/suggested_tasks.js'; 
 
 import { errorHandler } from './middleware/errorHandler.js';
 
@@ -28,6 +29,7 @@ app.use('/app_users', app_usersRouter);
 app.use('/integrations', integrationsRouter);
 app.use('/task_ai_messages', task_ai_messagesRouter);
 app.use('/assistant_messages', assistant_messagesRouter);
+app.use('/suggested_tasks', suggested_tasksRouter); 
 
 // Health check
 app.get('/', (req, res) => res.json({ status: 'API is running!' }));
