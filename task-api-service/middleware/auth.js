@@ -4,9 +4,9 @@ export default async function auth(req, res, next) {
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(401).json({ error: 'Authorization token required' });
     }
-    // Temporarily set a mock req.user for testing (postponing full Magic integration)
-    // This prevents the 'req.user undefined' error; replace with actual validation later
-    req.user = { issuer: '00000000-0000-0000-0000-000000000000' };  // Use a fixed test UUID or make it dynamic if needed
+    // Set a minimal req.user to prevent undefined errors
+    // No fixed issuer; controllers will use body.user_id or validate dynamically
+    req.user = {};
     next();
   } catch (err) {
     return res.status(401).json({ error: 'Authentication failed', details: err.message });
