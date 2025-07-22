@@ -14,7 +14,7 @@ router.post(
   '/',
   auth,
   [
-    body('folder_id').isUUID().withMessage('folder_id required'),
+    body('folder_id').optional().isUUID().withMessage('folder_id must be a valid UUID'),
     body('title').isString().notEmpty().withMessage('title required')
   ],
   validate,
