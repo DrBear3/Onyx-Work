@@ -1,7 +1,11 @@
 import { Magic } from '@magic-sdk/admin';
+import { createClient } from '@supabase/supabase-js';
 
 // Initialize Magic Admin SDK with the secret key from environment variables
 const magic = new Magic(process.env.MAGIC_SECRET_KEY);
+
+// Initialize Supabase client (do this outside the middleware for reuse)
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
 export default async function auth(req, res, next) {
   try {
@@ -18,6 +22,16 @@ export default async function auth(req, res, next) {
 
     // Attach user data to the request object
     req.user = { issuer, publicAddress, email };
+
+    // After authentication, store/update user in Supabase
+    const { data, error } = await supabase
+      .from('users')
+      .upsert({ issuer: req.user.issuer, email: req.user.email }, { onConflict: 'issuer' });
+
+    if (error) {
+      console.error('Supabase upsert error:', error.message); // Log error but proceed
+      // Optional: return res.status(500).json({ error: 'User storage failed' }); // If you want to halt on error
+    }
 
     next();
   } catch (err) {
