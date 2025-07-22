@@ -1,5 +1,4 @@
 import pool from '../db/pool.js';
-import { validate as validateUUID } from 'uuid-validate';
 
 // List subtasks for the user, optionally filtered by task_id
 export const getSubtasks = async (req, res, next) => {
