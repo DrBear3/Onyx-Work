@@ -15,10 +15,14 @@ router.post(
   '/',
   auth,
   [
-    body('task_id').isUUID().withMessage('task_id must be a valid UUID'),
-    body('message').isString().notEmpty().withMessage('message required'),
-    body('from_user').isBoolean().withMessage('from_user must be a boolean'),
-    body('from_ai').isBoolean().withMessage('from_ai must be a boolean')
+    body('task_id').isInt().withMessage('task_id must be a valid integer'),
+    body('message')
+      .isString()
+      .trim()
+      .isLength({ min: 1, max: 2000 })
+      .withMessage('message is required and must be between 1 and 2000 characters'),
+    body('from_user').optional().isBoolean().withMessage('from_user must be a boolean'),
+    body('from_ai').optional().isBoolean().withMessage('from_ai must be a boolean')
   ],
   validate,
   task_ai_messagesController.createTaskAiMessage

@@ -12,7 +12,7 @@ const PRICE_IDS = {
 };
 
 const getTierFromPriceId = (priceId) => {
-  if (priceId === PRICE_IDS.basic) return 'basic';
+  if (priceId === PRICE_IDS.basic) return 'free';
   if (priceId === PRICE_IDS.premium) return 'premium';
   if (priceId === PRICE_IDS.plaid) return 'plaid';
   throw new Error('Unknown priceId');
@@ -25,11 +25,11 @@ export const createCheckoutSession = async (req, res) => {
       return res.status(400).json({ error: 'Invalid priceId. Only Turbo or Plaid plans are supported.' });
     }
 
-    // Fetch user from Supabase
+    // Fetch user from app_users table
     const { data: user, error } = await supabase
-      .from('users')
+      .from('app_users')
       .select('stripe_customer_id')
-      .eq('id', userId)
+      .eq('user_id', userId)
       .single();
     if (error || !user) {
       return res.status(404).json({ error: 'User not found' });
@@ -43,9 +43,9 @@ export const createCheckoutSession = async (req, res) => {
       });
       customerId = customer.id;
       await supabase
-        .from('users')
+        .from('app_users')
         .update({ stripe_customer_id: customerId })
-        .eq('id', userId);
+        .eq('user_id', userId);
     }
 
     // Create Checkout session
@@ -70,11 +70,11 @@ export const createPortalSession = async (req, res) => {
   try {
     const { userId } = req.body;
 
-    // Fetch user from Supabase
+    // Fetch user from app_users table
     const { data: user, error } = await supabase
-      .from('users')
+      .from('app_users')
       .select('stripe_customer_id')
-      .eq('id', userId)
+      .eq('user_id', userId)
       .single();
     if (error || !user || !user.stripe_customer_id) {
       return res.status(404).json({ error: 'User or Stripe customer not found' });
@@ -115,13 +115,13 @@ export const handleWebhook = async (req, res) => {
         const tier = getTierFromPriceId(priceId);
 
         await supabase
-          .from('users')
+          .from('app_users')
           .update({
             stripe_subscription_id: subscriptionId,
             subscription: tier,
             subscription_updated_at: new Date().toISOString()
           })
-          .eq('id', userId);
+          .eq('user_id', userId);
         break;
       }
       case 'customer.subscription.updated': {
@@ -140,14 +140,14 @@ export const handleWebhook = async (req, res) => {
           updateData.subscription = tier;
           updateData.stripe_subscription_id = subscription.id;
         } else {
-          updateData.subscription = 'basic';
+          updateData.subscription = 'free';
           updateData.stripe_subscription_id = null;
         }
 
         await supabase
-          .from('users')
+          .from('app_users')
           .update(updateData)
-          .eq('id', userId);
+          .eq('user_id', userId);
         break;
       }
       case 'customer.subscription.deleted': {
@@ -159,13 +159,13 @@ export const handleWebhook = async (req, res) => {
         }
 
         await supabase
-          .from('users')
+          .from('app_users')
           .update({
             stripe_subscription_id: null,
-            subscription: 'basic',
+            subscription: 'free',
             subscription_updated_at: new Date().toISOString()
           })
-          .eq('id', userId);
+          .eq('user_id', userId);
         break;
       }
       default:
@@ -179,7 +179,7 @@ export const handleWebhook = async (req, res) => {
   }
 };
 
-export const assignBasicPlan = async (userId, email) => {
+export const assignFreePlan = async (userId, email) => {
   try {
     // Create Stripe customer
     const customer = await stripe.customers.create({
@@ -187,17 +187,17 @@ export const assignBasicPlan = async (userId, email) => {
       metadata: { userId }
     });
 
-    // Update Supabase with customer details and basic subscription
+    // Update app_users table with customer details and free subscription
     await supabase
-      .from('users')
+      .from('app_users')
       .update({
         stripe_customer_id: customer.id,
-        subscription: 'basic',
+        subscription: 'free',
         subscription_updated_at: new Date().toISOString()
       })
-      .eq('id', userId);
+      .eq('user_id', userId);
   } catch (error) {
-    console.error('Basic plan assignment error:', error);
-    throw new Error('Failed to assign basic plan');
+    console.error('Free plan assignment error:', error);
+    throw new Error('Failed to assign free plan');
   }
 };

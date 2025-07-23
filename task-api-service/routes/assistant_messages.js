@@ -15,9 +15,18 @@ router.post(
   '/',
   auth,
   [
-    body('message').isString().notEmpty().withMessage('message required'),
-    body('from_user').isBoolean().withMessage('from_user must be a boolean'),
-    body('from_ai').isBoolean().withMessage('from_ai must be a boolean')
+    body('message')
+      .isString()
+      .trim()
+      .isLength({ min: 1, max: 2000 })
+      .withMessage('message is required and must be between 1 and 2000 characters'),
+    body('from_user').optional().isBoolean().withMessage('from_user must be a boolean'),
+    body('from_ai').optional().isBoolean().withMessage('from_ai must be a boolean'),
+    body('view_context').optional().isObject().withMessage('view_context must be an object'),
+    body('view_context.current_view').optional().isString().withMessage('current_view must be a string'),
+    body('view_context.visible_task_ids').optional().isArray().withMessage('visible_task_ids must be an array'),
+    body('view_context.visible_folder_ids').optional().isArray().withMessage('visible_folder_ids must be an array'),
+    body('view_context.current_folder_id').optional().isInt().withMessage('current_folder_id must be an integer')
   ],
   validate,
   assistant_messagesController.createAssistantMessage
