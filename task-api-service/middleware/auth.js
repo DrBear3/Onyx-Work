@@ -7,6 +7,9 @@ const magic = new Magic(process.env.MAGIC_SECRET_KEY);
 // Initialize Supabase client (do this outside the middleware for reuse)
 const supabase = createClient(process.env.DATABASE_URL, process.env.DB_PASSWORD);
 
+console.log('DATABASE_URL:', process.env.DATABASE_URL);
+console.log('DB_PASSWORD:', process.env.DB_PASSWORD);
+
 export default async function auth(req, res, next) {
   try {
     const authHeader = req.headers['authorization'];
