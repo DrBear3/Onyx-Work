@@ -2,15 +2,17 @@ import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY_DEV, { apiVersion: '2025-06-30' });
-const supabase = createClient(process.env.DATABASE_URL, process.env.DB_PASSWORD);
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
-// Price IDs from Stripe Dashboard (replace with your actual IDs)
+// Price IDs from Stripe Dashboard
 const PRICE_IDS = {
-  premium: 'price_premium_plan_id', // Premium plan price ID
-  plaid: 'price_plaid_plan_id' // Plaid plan price ID
+  basic: 'prod_SWSNSGtKXHpOqQ', // Basic plan price ID
+  premium: 'prod_SWSOmJJ9ow6EpS', // Turbo plan price ID
+  plaid: 'prod_SWSPrfNOZuTVJe' // Plaid plan price ID
 };
 
 const getTierFromPriceId = (priceId) => {
+  if (priceId === PRICE_IDS.basic) return 'basic';
   if (priceId === PRICE_IDS.premium) return 'premium';
   if (priceId === PRICE_IDS.plaid) return 'plaid';
   throw new Error('Unknown priceId');
@@ -20,7 +22,7 @@ export const createCheckoutSession = async (req, res) => {
   try {
     const { priceId, userId } = req.body;
     if (![PRICE_IDS.premium, PRICE_IDS.plaid].includes(priceId)) {
-      return res.status(400).json({ error: 'Invalid priceId' });
+      return res.status(400).json({ error: 'Invalid priceId. Only Turbo or Plaid plans are supported.' });
     }
 
     // Fetch user from Supabase
@@ -81,7 +83,7 @@ export const createPortalSession = async (req, res) => {
     // Create portal session
     const portalSession = await stripe.billingPortal.sessions.create({
       customer: user.stripe_customer_id,
-      return_url: 'https://useonyx.co/home'
+      return_url: 'https://your-app.com/account'
     });
 
     res.json({ url: portalSession.url });
@@ -138,7 +140,7 @@ export const handleWebhook = async (req, res) => {
           updateData.subscription = tier;
           updateData.stripe_subscription_id = subscription.id;
         } else {
-          updateData.subscription = 'free';
+          updateData.subscription = 'basic';
           updateData.stripe_subscription_id = null;
         }
 
@@ -160,7 +162,7 @@ export const handleWebhook = async (req, res) => {
           .from('users')
           .update({
             stripe_subscription_id: null,
-            subscription: 'free',
+            subscription: 'basic',
             subscription_updated_at: new Date().toISOString()
           })
           .eq('id', userId);
@@ -177,8 +179,7 @@ export const handleWebhook = async (req, res) => {
   }
 };
 
-// Assign Free plan on signup
-export const assignFreePlan = async (userId, email) => {
+export const assignBasicPlan = async (userId, email) => {
   try {
     // Create Stripe customer
     const customer = await stripe.customers.create({
@@ -186,17 +187,17 @@ export const assignFreePlan = async (userId, email) => {
       metadata: { userId }
     });
 
-    // Update Supabase with customer details and free subscription
+    // Update Supabase with customer details and basic subscription
     await supabase
       .from('users')
       .update({
         stripe_customer_id: customer.id,
-        subscription: 'free',
+        subscription: 'basic',
         subscription_updated_at: new Date().toISOString()
       })
       .eq('id', userId);
   } catch (error) {
-    console.error('Free plan assignment error:', error);
-    throw new Error('Failed to assign free plan');
+    console.error('Basic plan assignment error:', error);
+    throw new Error('Failed to assign basic plan');
   }
 };
