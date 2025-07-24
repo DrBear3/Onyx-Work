@@ -16,6 +16,7 @@ import assistant_messagesRouter from './routes/assistant_messages.js';
 import suggested_tasksRouter from './routes/suggested_tasks.js'; 
 import stripeRouter from './routes/stripe.js';
 import aiRouter from './routes/ai.js';
+import milestonesRouter from './routes/milestones.js';
 
 import { errorHandler } from './middleware/errorHandler.js';
 
@@ -90,6 +91,7 @@ app.use('/api/v1/assistant_messages', assistant_messagesRouter);
 app.use('/api/v1/suggested_tasks', suggested_tasksRouter); 
 app.use('/api/v1/stripe', stripeRouter);
 app.use('/api/v1/ai', aiRouter);
+app.use('/api/v1/milestones', milestonesRouter);
 
 // Backward compatibility (keep old routes)
 app.use('/folders', foldersRouter);
